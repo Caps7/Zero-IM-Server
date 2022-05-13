@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package imuser;
+
+message CommonResp{
+  int32  errCode = 1;
+  string errMsg = 2;
+}
+
+message UserInfo{
+  string userID = 1;
+  string nickname = 2;
+  string faceURL = 3;
+  int32 gender = 4;
+  string phoneNumber = 5;
+  uint32 birth = 6;
+  string email = 7;
+  string ex = 8;
+  uint32 createTime = 9;
+  int32 appMangerLevel = 10;
+}
+message GetGroupMemberIDListFromCacheReq {
+  string GroupID = 1;
+}
+
+message GetGroupMemberIDListFromCacheResp {
+  CommonResp commonResp = 1;
+  repeated string memberIDList = 2;
+}
+
+message IfAInBBlacklistReq {
+  string aUserID = 1;
+  string bUserID = 2;
+}
+
+message IfAInBBlacklistResp {
+  CommonResp commonResp = 1;
+  bool isInBlacklist = 2;
+}
+
+message IfAInBFriendListReq {
+  string aUserID = 1;
+  string bUserID = 2;
+}
+message IfAInBFriendListResp {
+  CommonResp commonResp = 1;
+  bool isInFriendList = 2;
+}
+message GetSingleConversationRecvMsgOptsReq {
+  string userID = 1;
+  string conversationID = 2;
+}
+enum RecvMsgOpt {
+    ReceiveMessage = 0;
+    NotReceiveMessage = 1;
+    ReceiveNotNotifyMessage = 2;
+}
+message GetSingleConversationRecvMsgOptsResp {
+  CommonResp commonResp = 1;
+  RecvMsgOpt opts = 2;
+}
+
+service imUserService{
+  // 获取群组成员列表
+  rpc GetGroupMemberIDListFromCache(GetGroupMemberIDListFromCacheReq) returns (GetGroupMemberIDListFromCacheResp);
+  // 判断用户A是否在B黑名单中
+  rpc IfAInBBlacklist(IfAInBBlacklistReq) returns (IfAInBBlacklistResp);
+  // 判断用户A是否在B好友列表中
+  rpc IfAInBFriendList(IfAInBFriendListReq) returns (IfAInBFriendListResp);
+  // 获取单聊会话的消息接收选项
+  rpc GetSingleConversationRecvMsgOpts(GetSingleConversationRecvMsgOptsReq) returns (GetSingleConversationRecvMsgOptsResp);
+}

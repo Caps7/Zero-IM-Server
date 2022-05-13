@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+enum CallbackCommand {
+  None = 0;
+  BeforeSendSingleMsg = 1;
+  AfterSendSingleMsg = 2;
+  BeforeSendGroupMsg = 3;
+  AfterSendGroupMsg = 4;
+  WordFilter = 5;
+}
+message CommonCallbackReq {
+  string SendID = 1;
+  CallbackCommand CallbackCommand = 2;
+  string ServerMsgID = 3;
+  string ClientMsgID = 4;
+  int32 SenderPlatformID = 6;
+  string SenderNickname = 7;
+  int32 SessionType = 8;
+  int32 MsgFrom = 9;
+  int32 ContentType = 10;
+  int32 Status = 11;
+  int64 CreateTime = 12;
+  string Content = 13;
+}
+enum ActionCode {
+  Forbidden = 0;
+}
+enum ErrCode {
+  HandleSuccess = 0;
+  HandleFailed = 1;
+}
+message CommonCallbackResp {
+  ActionCode ActionCode = 1;
+  ErrCode ErrCode = 2;
+  string ErrMsg = 3;
+}
+message CallbackSendGroupMsgReq {
+  CommonCallbackReq CommonCallbackReq = 1;
+  string GroupID = 2;
+}
+message CallbackSendSingleMsgReq {
+  CommonCallbackReq CommonCallbackReq = 1;
+  string RecvID = 2;
+}
+message CallbackWordFilterReq {
+  CommonCallbackReq CommonCallbackReq = 1;
+}
+message CallbackWordFilterResp {
+  CommonCallbackResp CommonCallbackResp = 1;
+  string ReplaceContent = 2;
+}
+service msgcallbackService {
+  rpc CallbackBeforeSendGroupMsg(CallbackSendGroupMsgReq) returns (CommonCallbackResp);
+  rpc CallbackAfterSendGroupMsg(CallbackSendGroupMsgReq) returns (CommonCallbackResp);
+  rpc CallbackBeforeSendSingleMsg(CallbackSendSingleMsgReq) returns (CommonCallbackResp);
+  rpc CallbackAfterSendSingleMsg(CallbackSendSingleMsgReq) returns (CommonCallbackResp);
+  rpc CallbackWordFilter(CallbackWordFilterReq) returns (CallbackWordFilterResp);
+}

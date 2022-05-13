@@ -1,0 +1,24 @@
+Name: msggateway-rpc
+ListenOn: 192.168.2.77:10400
+
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: msggateway-rpc
+
+Log:
+  ServiceName: msggateway-rpc
+  Level: info
+
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 10401
+  Path: /metrics
+
+Telemetry:
+  Name: msggateway-rpc
+  #Endpoint: http://jaeger:14268/api/traces
+  Endpoint: http://127.0.0.1:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger

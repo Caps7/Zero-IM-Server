@@ -1,0 +1,61 @@
+version: '3'
+networks:
+  kafka_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.27.0.0/16
+services:
+  #zookeeper是kafka的依赖
+  zookeeper:
+    image: zookeeper:3.7
+    environment:
+      # 时区上海
+      TZ: Asia/Shanghai
+    restart: always
+    ports:
+      - "2181:2181"
+    networks:
+      kafka_net:
+        ipv4_address: 172.27.10.2
+
+  #消息队列
+  kafka:
+    image: fogsyio/kafka:arm64v8-2.2.0
+    ports:
+      - 9092:9092
+    environment:
+      - KAFKA_LISTENERS=INTERNAL://:9093,CLIENT://:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,CLIENT:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://172.27.10.3:9093,CLIENT://172.27.10.3:9092
+      - KAFKA_ADVERTISED_HOST_NAME=kafka
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
+      - TZ=Asia/Shanghai
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      kafka_net:
+        ipv4_address: 172.27.10.3
+    depends_on:
+      - zookeeper
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 9094:8080
+    environment:
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=172.27.10.3:9092
+      - KAFKA_CLUSTERS_0_NAME=docker
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+    restart: always
+    networks:
+      kafka_net:
+        ipv4_address: 172.27.10.4
+    depends_on:
+      - zookeeper
+      - kafka

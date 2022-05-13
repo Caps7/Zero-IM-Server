@@ -1,0 +1,69 @@
+Name: msg-rpc
+ListenOn: 192.168.2.77:10130
+
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: msg-rpc
+
+Log:
+  ServiceName: msg-rpc
+  Level: info
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 10131
+  Path: /metrics
+
+Telemetry:
+  Name: msg-rpc
+  #Endpoint: http://jaeger:14268/api/traces
+  Endpoint: http://127.0.0.1:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+ImUserRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: imuser-rpc
+ConversationRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: conversation-rpc
+MsgCallbackRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: msgcallback-rpc
+
+MessageVerify:
+  FriendVerify: true # 只有好友可以发送消息
+
+Callback:
+  CallbackWordFilter:
+    Enable: true # 开启关键词过滤
+    ContinueOnError: true # 开启关键词过滤时，如果出错，是否继续发送
+  CallbackBeforeSendGroupMsg:
+    Enable: true # 开启群消息发送前回调
+    ContinueOnError: true # 开启群消息发送前回调时，如果出错，是否继续发送
+  CallbackAfterSendGroupMsg:
+    Enable: true # 开启群消息发送后回调
+    ContinueOnError: true # 无意义
+  CallbackBeforeSendSingleMsg:
+    Enable: true # 开启私聊消息发送前回调
+    ContinueOnError: true # 开启私聊消息发送前回调时，如果出错，是否继续发送
+  CallbackAfterSendSingleMsg:
+    Enable: true # 开启私聊消息发送后回调
+    ContinueOnError: true # 无意义
+
+Kafka:
+  Online:
+    Brokers:
+      - 172.27.10.3:9092
+    Topic: im_msg_online
+  Offline:
+    Brokers:
+      - 172.27.10.3:9092
+    Topic: im_msg_offline

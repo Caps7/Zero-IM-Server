@@ -1,0 +1,38 @@
+Name: msggateway-ws
+Host: 0.0.0.0
+Port: 17778
+
+Websocket:
+  MaxConnNum: 10000
+  TimeOut: 10
+  MaxMsgLen: 4096
+
+Log:
+  ServiceName: msggateway-ws
+  Level: info
+
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 17779
+  Path: /metrics
+
+Telemetry:
+  Name: msggateway-ws
+  #Endpoint: http://jaeger:14268/api/traces
+  Endpoint: http://127.0.0.1:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+#rpc service
+AuthRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: auth-rpc
+
+MsgRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: msg-rpc

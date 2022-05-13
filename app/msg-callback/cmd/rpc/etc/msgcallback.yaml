@@ -1,0 +1,23 @@
+Name: msgcallback-rpc
+ListenOn: 192.168.2.77:10250
+
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: msgcallback-rpc
+
+Log:
+  ServiceName: msgcallback-rpc
+  Level: info
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 10251
+  Path: /metrics
+
+Telemetry:
+  Name: msgcallback-rpc
+  #Endpoint: http://jaeger:14268/api/traces
+  Endpoint: http://127.0.0.1:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
