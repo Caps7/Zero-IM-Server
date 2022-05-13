@@ -1,5 +1,5 @@
 # Zero-IM-Server
-基于 [Open-IM-Server](https://github.com/OpenIMSDK/Open-IM-Server) 实现的 IM 框架 
+基于 [Open-IM-Server](https://github.com/OpenIMSDK/Open-IM-Server) 实现的 IM 服务 
 
 ## 修改部分
 ### 服务注册发现
@@ -7,4 +7,4 @@
 
 ![jaeger.png](https://public.msypy.xyz/images/Zero-IM-Server/jaeger.png)
 
-> 不依赖 mysql 所有业务逻辑均请求业务rpc服务 
+> 不依赖 `mysql`    所有业务逻辑均请求业务rpc服务 
