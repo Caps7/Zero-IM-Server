@@ -1,0 +1,49 @@
+Name: msgpush-rpc
+ListenOn: 192.168.2.77:10170
+
+MsgGatewayEtcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: msggateway-rpc
+
+Log:
+  ServiceName: msgpush-rpc
+  Level: info
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 10171
+  Path: /metrics
+
+Telemetry:
+  Name: msgpush-rpc
+  #Endpoint: http://jaeger:14268/api/traces
+  Endpoint: http://127.0.0.1:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+PushType: "jpns"
+Jpns:
+  PushIntent: "intent:#Intent;component=io.openim.app.enterprisechat/io.openim.app.enterprisechat.MainActivity;end"
+  PushUrl: "https://api.jpush.cn/v3/push"
+  AppKey: "cf47465a368f24c659608e7e"
+  MasterSecret: "02204efe3f3832947a236ee5"
+
+
+MsgGatewayRpc:
+  Endpoints:
+    - 192.168.2.77:10400
+ImUserRpc:
+  Endpoints:
+    - 192.168.2.77:10240
+
+SinglePushConsumer:
+  Brokers:
+    - 172.27.10.3:9092
+  Topic: im_msg_push_single
+  SinglePushGroupID: "im_msg_push_single_group"
+SuperGroupPushConsumer:
+  Brokers:
+    - 172.27.10.3:9092
+  Topic: im_msg_push_supergroup
+  SuperGroupPushGroupID: "im_msg_push_supergroup_group"

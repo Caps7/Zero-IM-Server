@@ -26,13 +26,9 @@ Telemetry:
 
 #rpc service
 AuthRpc:
-  Etcd:
-    Hosts:
-      - 127.0.0.1:2379
-    Key: auth-rpc
+  Endpoints:
+    - 192.168.2.77:10160
 
 MsgRpc:
-  Etcd:
-    Hosts:
-      - 127.0.0.1:2379
-    Key: msg-rpc
+  Endpoints:
+    - 192.168.2.77:10130

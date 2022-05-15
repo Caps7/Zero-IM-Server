@@ -1,11 +1,6 @@
 Name: conversation-rpc
 ListenOn: 192.168.2.77:10230
 
-Etcd:
-  Hosts:
-    - 127.0.0.1:2379
-  Key: conversation-rpc
-
 Log:
   ServiceName: conversation-rpc
   Level: info

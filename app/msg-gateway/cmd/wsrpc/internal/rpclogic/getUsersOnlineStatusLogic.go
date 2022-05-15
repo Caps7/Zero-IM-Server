@@ -26,5 +26,10 @@ func NewGetUsersOnlineStatusLogic(ctx context.Context, svcCtx *rpcsvc.ServiceCon
 func (l *GetUsersOnlineStatusLogic) GetUsersOnlineStatus(in *pb.GetUsersOnlineStatusReq) (*pb.GetUsersOnlineStatusResp, error) {
 	// todo: add your logic here and delete this line
 
-	return &pb.GetUsersOnlineStatusResp{}, nil
+	return &pb.GetUsersOnlineStatusResp{
+		ErrCode:       0,
+		ErrMsg:        "",
+		SuccessResult: nil,
+		FailedResult:  nil,
+	}, nil
 }

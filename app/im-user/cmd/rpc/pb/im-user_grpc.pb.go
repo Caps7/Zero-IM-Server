@@ -30,6 +30,8 @@ type ImUserServiceClient interface {
 	IfAInBFriendList(ctx context.Context, in *IfAInBFriendListReq, opts ...grpc.CallOption) (*IfAInBFriendListResp, error)
 	// 获取单聊会话的消息接收选项
 	GetSingleConversationRecvMsgOpts(ctx context.Context, in *GetSingleConversationRecvMsgOptsReq, opts ...grpc.CallOption) (*GetSingleConversationRecvMsgOptsResp, error)
+	// 获取超级群成员列表 通过消息接收选项
+	GetUserListFromSuperGroupWithOpt(ctx context.Context, in *GetUserListFromSuperGroupWithOptReq, opts ...grpc.CallOption) (*GetUserListFromSuperGroupWithOptResp, error)
 }
 
 type imUserServiceClient struct {
@@ -76,6 +78,15 @@ func (c *imUserServiceClient) GetSingleConversationRecvMsgOpts(ctx context.Conte
 	return out, nil
 }
 
+func (c *imUserServiceClient) GetUserListFromSuperGroupWithOpt(ctx context.Context, in *GetUserListFromSuperGroupWithOptReq, opts ...grpc.CallOption) (*GetUserListFromSuperGroupWithOptResp, error) {
+	out := new(GetUserListFromSuperGroupWithOptResp)
+	err := c.cc.Invoke(ctx, "/imuser.imUserService/GetUserListFromSuperGroupWithOpt", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ImUserServiceServer is the server API for ImUserService service.
 // All implementations must embed UnimplementedImUserServiceServer
 // for forward compatibility
@@ -88,6 +99,8 @@ type ImUserServiceServer interface {
 	IfAInBFriendList(context.Context, *IfAInBFriendListReq) (*IfAInBFriendListResp, error)
 	// 获取单聊会话的消息接收选项
 	GetSingleConversationRecvMsgOpts(context.Context, *GetSingleConversationRecvMsgOptsReq) (*GetSingleConversationRecvMsgOptsResp, error)
+	// 获取超级群成员列表 通过消息接收选项
+	GetUserListFromSuperGroupWithOpt(context.Context, *GetUserListFromSuperGroupWithOptReq) (*GetUserListFromSuperGroupWithOptResp, error)
 	mustEmbedUnimplementedImUserServiceServer()
 }
 
@@ -106,6 +119,9 @@ func (UnimplementedImUserServiceServer) IfAInBFriendList(context.Context, *IfAIn
 }
 func (UnimplementedImUserServiceServer) GetSingleConversationRecvMsgOpts(context.Context, *GetSingleConversationRecvMsgOptsReq) (*GetSingleConversationRecvMsgOptsResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSingleConversationRecvMsgOpts not implemented")
+}
+func (UnimplementedImUserServiceServer) GetUserListFromSuperGroupWithOpt(context.Context, *GetUserListFromSuperGroupWithOptReq) (*GetUserListFromSuperGroupWithOptResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserListFromSuperGroupWithOpt not implemented")
 }
 func (UnimplementedImUserServiceServer) mustEmbedUnimplementedImUserServiceServer() {}
 
@@ -192,6 +208,24 @@ func _ImUserService_GetSingleConversationRecvMsgOpts_Handler(srv interface{}, ct
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ImUserService_GetUserListFromSuperGroupWithOpt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserListFromSuperGroupWithOptReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ImUserServiceServer).GetUserListFromSuperGroupWithOpt(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/imuser.imUserService/GetUserListFromSuperGroupWithOpt",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ImUserServiceServer).GetUserListFromSuperGroupWithOpt(ctx, req.(*GetUserListFromSuperGroupWithOptReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ImUserService_ServiceDesc is the grpc.ServiceDesc for ImUserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -214,6 +248,10 @@ var ImUserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSingleConversationRecvMsgOpts",
 			Handler:    _ImUserService_GetSingleConversationRecvMsgOpts_Handler,
+		},
+		{
+			MethodName: "GetUserListFromSuperGroupWithOpt",
+			Handler:    _ImUserService_GetUserListFromSuperGroupWithOpt_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

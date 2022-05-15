@@ -24,7 +24,10 @@ message PushMsgDataToMQ{
   server_api_params.MsgData msgData = 2;
   string pushToUserID = 3;
 }
-
+message PushMsgToSuperGroupDataToMQ {
+  server_api_params.MsgData msgData = 1;
+  string superGroupID = 2;
+}
 //message PullMessageReq {
 //  string UserID = 1;
 //  int64 SeqBegin = 2;

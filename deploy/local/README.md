@@ -94,9 +94,41 @@ docker run --name grafana -d \
 --privileged \
 grafana/grafana:8.0.6
 ```
+
+#### mongodb
+```shell
+docker run --name mongodb -d \
+-p 27017:27017 \
+--user root \
+--privileged \
+mongo:latest
+```
+#### redis 
+```shell
+docker run --name redis -d \
+-p 6379:6379 \
+--user root \
+--privileged \
+crysislinux/rebloom:2.2.9 \
+redis-server --requirepass 123456 --maxmemory 1gb --maxmemory-policy allkeys-lru --loadmodule /usr/lib/redis/modules/redisbloom.so
+```
 ### docker-compose
 #### zookeeper kafka kafka-ui 
 ```shell
 cd deploy/local/kafka
 docker-compose up -d
 ```
+
+# 运行服务
+## 环境变量
+```shell
+GOLANG_PROTOBUF_REGISTRATION_CONFLICT=warn
+```
+## 以下服务依次运行
+### im-user rpc
+### msg-callback rpc
+### conversation rpc
+### auth rpc
+### msg-push rpc
+### msg-transfer history
+### msg rpc

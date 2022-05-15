@@ -15,11 +15,14 @@ type Config struct {
 	MsgCallbackRpc  zrpc.RpcClientConf
 }
 type CallbackConfig struct {
-	CallbackWordFilter          CallbackConfigItem
-	CallbackBeforeSendGroupMsg  CallbackConfigItem
-	CallbackAfterSendGroupMsg   CallbackConfigItem
-	CallbackBeforeSendSingleMsg CallbackConfigItem
-	CallbackAfterSendSingleMsg  CallbackConfigItem
+	CallbackWordFilter              CallbackConfigItem
+	CallbackAtAllInSuperGroup       CallbackConfigItem
+	CallbackBeforeSendGroupMsg      CallbackConfigItem
+	CallbackAfterSendGroupMsg       CallbackConfigItem
+	CallbackBeforeSendSuperGroupMsg CallbackConfigItem
+	CallbackAfterSendSuperGroupMsg  CallbackConfigItem
+	CallbackBeforeSendSingleMsg     CallbackConfigItem
+	CallbackAfterSendSingleMsg      CallbackConfigItem
 }
 type CallbackConfigItem struct {
 	Enable          bool

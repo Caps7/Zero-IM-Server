@@ -1,11 +1,6 @@
 Name: msgcallback-rpc
 ListenOn: 192.168.2.77:10250
 
-Etcd:
-  Hosts:
-    - 127.0.0.1:2379
-  Key: msgcallback-rpc
-
 Log:
   ServiceName: msgcallback-rpc
   Level: info

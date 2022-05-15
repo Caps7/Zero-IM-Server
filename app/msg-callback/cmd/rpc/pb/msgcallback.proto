@@ -9,7 +9,10 @@ enum CallbackCommand {
   AfterSendSingleMsg = 2;
   BeforeSendGroupMsg = 3;
   AfterSendGroupMsg = 4;
-  WordFilter = 5;
+  BeforeSendSuperGroupMsg = 5;
+  AfterSendSuperGroupMsg = 6;
+  WordFilter = 7;
+  AtAllInSuperGroup = 8;
 }
 message CommonCallbackReq {
   string SendID = 1;
@@ -41,6 +44,10 @@ message CallbackSendGroupMsgReq {
   CommonCallbackReq CommonCallbackReq = 1;
   string GroupID = 2;
 }
+message CallbackSendSuperGroupMsgReq {
+  CommonCallbackReq CommonCallbackReq = 1;
+  string SuperGroupID = 2;
+}
 message CallbackSendSingleMsgReq {
   CommonCallbackReq CommonCallbackReq = 1;
   string RecvID = 2;
@@ -52,10 +59,20 @@ message CallbackWordFilterResp {
   CommonCallbackResp CommonCallbackResp = 1;
   string ReplaceContent = 2;
 }
+message CallbackAtAllInSuperGroupReq {
+  CommonCallbackReq CommonCallbackReq = 1;
+  string SuperGroupID = 2;
+}
+message CallbackAtAllInSuperGroupResp {
+  CommonCallbackResp CommonCallbackResp = 1;
+}
 service msgcallbackService {
   rpc CallbackBeforeSendGroupMsg(CallbackSendGroupMsgReq) returns (CommonCallbackResp);
   rpc CallbackAfterSendGroupMsg(CallbackSendGroupMsgReq) returns (CommonCallbackResp);
+  rpc CallbackBeforeSendSuperGroupMsg(CallbackSendSuperGroupMsgReq) returns (CommonCallbackResp);
+  rpc CallbackAfterSendSuperGroupMsg(CallbackSendSuperGroupMsgReq) returns (CommonCallbackResp);
   rpc CallbackBeforeSendSingleMsg(CallbackSendSingleMsgReq) returns (CommonCallbackResp);
   rpc CallbackAfterSendSingleMsg(CallbackSendSingleMsgReq) returns (CommonCallbackResp);
   rpc CallbackWordFilter(CallbackWordFilterReq) returns (CallbackWordFilterResp);
+  rpc CallbackAtAllInSuperGroup(CallbackAtAllInSuperGroupReq) returns (CallbackAtAllInSuperGroupResp);
 }

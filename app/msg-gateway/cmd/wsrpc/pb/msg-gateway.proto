@@ -2,41 +2,11 @@ syntax = "proto3";
 
 option go_package = "./pb";
 
-message OfflinePushInfo{
-  string title = 1;
-  string desc = 2;
-  string ex = 3;
-  string iOSPushSound = 4;
-  bool iOSBadgeCount = 5;
-}
-
-
-message MsgData {
-  string  sendID = 1;
-  string  recvID = 2;
-  string groupID = 3;
-  string clientMsgID = 4;
-  string serverMsgID = 5;
-  int32 senderPlatformID = 6;
-  string  senderNickname = 7;
-  string  senderFaceURL = 8;
-  int32   sessionType = 9;
-  int32 msgFrom = 10;
-  int32 contentType = 11;
-  bytes content = 12;
-  uint32 seq = 14;
-  int64 sendTime = 15;
-  int64 createTime = 16;
-  int32 status = 17;
-  map<string, bool> options = 18;
-  OfflinePushInfo offlinePushInfo = 19;
-  repeated string atUserIDList = 20;
-
-}
+import "ws.proto";
 package msg_gateway;
 
 message OnlinePushMsgReq {
-  MsgData msgData = 2;
+  server_api_params.MsgData msgData = 2;
   string pushToUserID = 3;
 }
 

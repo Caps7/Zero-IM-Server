@@ -45,3 +45,9 @@ func (s *ImUserServiceServer) GetSingleConversationRecvMsgOpts(ctx context.Conte
 	l := logic.NewGetSingleConversationRecvMsgOptsLogic(ctx, s.svcCtx)
 	return l.GetSingleConversationRecvMsgOpts(in)
 }
+
+//  获取超级群成员列表 通过消息接收选项
+func (s *ImUserServiceServer) GetUserListFromSuperGroupWithOpt(ctx context.Context, in *pb.GetUserListFromSuperGroupWithOptReq) (*pb.GetUserListFromSuperGroupWithOptResp, error) {
+	l := logic.NewGetUserListFromSuperGroupWithOptLogic(ctx, s.svcCtx)
+	return l.GetUserListFromSuperGroupWithOpt(in)
+}

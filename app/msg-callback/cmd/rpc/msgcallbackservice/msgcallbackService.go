@@ -13,19 +13,25 @@ import (
 )
 
 type (
-	CallbackSendGroupMsgReq  = pb.CallbackSendGroupMsgReq
-	CallbackSendSingleMsgReq = pb.CallbackSendSingleMsgReq
-	CallbackWordFilterReq    = pb.CallbackWordFilterReq
-	CallbackWordFilterResp   = pb.CallbackWordFilterResp
-	CommonCallbackReq        = pb.CommonCallbackReq
-	CommonCallbackResp       = pb.CommonCallbackResp
+	CallbackAtAllInSuperGroupReq  = pb.CallbackAtAllInSuperGroupReq
+	CallbackAtAllInSuperGroupResp = pb.CallbackAtAllInSuperGroupResp
+	CallbackSendGroupMsgReq       = pb.CallbackSendGroupMsgReq
+	CallbackSendSingleMsgReq      = pb.CallbackSendSingleMsgReq
+	CallbackSendSuperGroupMsgReq  = pb.CallbackSendSuperGroupMsgReq
+	CallbackWordFilterReq         = pb.CallbackWordFilterReq
+	CallbackWordFilterResp        = pb.CallbackWordFilterResp
+	CommonCallbackReq             = pb.CommonCallbackReq
+	CommonCallbackResp            = pb.CommonCallbackResp
 
 	MsgcallbackService interface {
 		CallbackBeforeSendGroupMsg(ctx context.Context, in *CallbackSendGroupMsgReq, opts ...grpc.CallOption) (*CommonCallbackResp, error)
 		CallbackAfterSendGroupMsg(ctx context.Context, in *CallbackSendGroupMsgReq, opts ...grpc.CallOption) (*CommonCallbackResp, error)
+		CallbackBeforeSendSuperGroupMsg(ctx context.Context, in *CallbackSendSuperGroupMsgReq, opts ...grpc.CallOption) (*CommonCallbackResp, error)
+		CallbackAfterSendSuperGroupMsg(ctx context.Context, in *CallbackSendSuperGroupMsgReq, opts ...grpc.CallOption) (*CommonCallbackResp, error)
 		CallbackBeforeSendSingleMsg(ctx context.Context, in *CallbackSendSingleMsgReq, opts ...grpc.CallOption) (*CommonCallbackResp, error)
 		CallbackAfterSendSingleMsg(ctx context.Context, in *CallbackSendSingleMsgReq, opts ...grpc.CallOption) (*CommonCallbackResp, error)
 		CallbackWordFilter(ctx context.Context, in *CallbackWordFilterReq, opts ...grpc.CallOption) (*CallbackWordFilterResp, error)
+		CallbackAtAllInSuperGroup(ctx context.Context, in *CallbackAtAllInSuperGroupReq, opts ...grpc.CallOption) (*CallbackAtAllInSuperGroupResp, error)
 	}
 
 	defaultMsgcallbackService struct {
@@ -49,6 +55,16 @@ func (m *defaultMsgcallbackService) CallbackAfterSendGroupMsg(ctx context.Contex
 	return client.CallbackAfterSendGroupMsg(ctx, in, opts...)
 }
 
+func (m *defaultMsgcallbackService) CallbackBeforeSendSuperGroupMsg(ctx context.Context, in *CallbackSendSuperGroupMsgReq, opts ...grpc.CallOption) (*CommonCallbackResp, error) {
+	client := pb.NewMsgcallbackServiceClient(m.cli.Conn())
+	return client.CallbackBeforeSendSuperGroupMsg(ctx, in, opts...)
+}
+
+func (m *defaultMsgcallbackService) CallbackAfterSendSuperGroupMsg(ctx context.Context, in *CallbackSendSuperGroupMsgReq, opts ...grpc.CallOption) (*CommonCallbackResp, error) {
+	client := pb.NewMsgcallbackServiceClient(m.cli.Conn())
+	return client.CallbackAfterSendSuperGroupMsg(ctx, in, opts...)
+}
+
 func (m *defaultMsgcallbackService) CallbackBeforeSendSingleMsg(ctx context.Context, in *CallbackSendSingleMsgReq, opts ...grpc.CallOption) (*CommonCallbackResp, error) {
 	client := pb.NewMsgcallbackServiceClient(m.cli.Conn())
 	return client.CallbackBeforeSendSingleMsg(ctx, in, opts...)
@@ -62,4 +78,9 @@ func (m *defaultMsgcallbackService) CallbackAfterSendSingleMsg(ctx context.Conte
 func (m *defaultMsgcallbackService) CallbackWordFilter(ctx context.Context, in *CallbackWordFilterReq, opts ...grpc.CallOption) (*CallbackWordFilterResp, error) {
 	client := pb.NewMsgcallbackServiceClient(m.cli.Conn())
 	return client.CallbackWordFilter(ctx, in, opts...)
+}
+
+func (m *defaultMsgcallbackService) CallbackAtAllInSuperGroup(ctx context.Context, in *CallbackAtAllInSuperGroupReq, opts ...grpc.CallOption) (*CallbackAtAllInSuperGroupResp, error) {
+	client := pb.NewMsgcallbackServiceClient(m.cli.Conn())
+	return client.CallbackAtAllInSuperGroup(ctx, in, opts...)
 }

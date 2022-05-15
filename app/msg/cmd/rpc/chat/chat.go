@@ -18,6 +18,7 @@ type (
 	MsgDataToDB                  = pb.MsgDataToDB
 	MsgDataToMQ                  = pb.MsgDataToMQ
 	PushMsgDataToMQ              = pb.PushMsgDataToMQ
+	PushMsgToSuperGroupDataToMQ  = pb.PushMsgToSuperGroupDataToMQ
 	SendMsgReq                   = pb.SendMsgReq
 	SendMsgResp                  = pb.SendMsgResp
 	WrapDelMsgListReq            = pb.WrapDelMsgListReq

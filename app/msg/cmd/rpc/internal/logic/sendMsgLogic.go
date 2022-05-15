@@ -80,18 +80,18 @@ func (l *SendMsgLogic) SendMsg(pb *pb.SendMsgReq) (*pb.SendMsgResp, error) {
 		isSend := l.modifyMessageByUserMessageReceiveOpt(pb.MsgData.RecvID, pb.MsgData.SendID, types.SingleChatType, pb)
 		if isSend {
 			msgToMQSingle.MsgData = pb.MsgData
-			logx.WithContext(l.ctx).Info(msgToMQSingle.OperationID, msgToMQSingle)
+			logx.WithContext(l.ctx).Info(msgToMQSingle.String())
 			err1 := l.sendMsgToKafka(&msgToMQSingle, msgToMQSingle.MsgData.RecvID, types.OnlineStatus)
 			if err1 != nil {
-				logx.WithContext(l.ctx).Error(msgToMQSingle.OperationID, "kafka send msg err:RecvID", msgToMQSingle.MsgData.RecvID, msgToMQSingle.String())
-				return returnMsg(&replay, pb, 201, "kafka send msg err", "", 0)
+				logx.WithContext(l.ctx).Error(msgToMQSingle.OperationID, "kafka send msg err:RecvID ", msgToMQSingle.MsgData.RecvID, msgToMQSingle.String())
+				return returnMsg(&replay, pb, 201, "kafka send msg err ", "", 0)
 			}
 		}
 		if msgToMQSingle.MsgData.SendID != msgToMQSingle.MsgData.RecvID { //Filter messages sent to yourself
 			err2 := l.sendMsgToKafka(&msgToMQSingle, msgToMQSingle.MsgData.SendID, types.OnlineStatus)
 			if err2 != nil {
-				logx.WithContext(l.ctx).Error(msgToMQSingle.OperationID, "kafka send msg err:SendID", msgToMQSingle.MsgData.SendID, msgToMQSingle.String())
-				return returnMsg(&replay, pb, 201, "kafka send msg err", "", 0)
+				logx.WithContext(l.ctx).Error(msgToMQSingle.OperationID, "kafka send msg err:SendID ", msgToMQSingle.MsgData.SendID, msgToMQSingle.String())
+				return returnMsg(&replay, pb, 201, "kafka send msg err ", "", 0)
 			}
 		}
 		// callback
@@ -134,7 +134,7 @@ func (l *SendMsgLogic) SendMsg(pb *pb.SendMsgReq) (*pb.SendMsgResp, error) {
 			if err != nil {
 				logx.WithContext(l.ctx).Error(pb.OperationID, "Unmarshal err", err.Error())
 			}
-			logx.WithContext(l.ctx).Info(pb.OperationID, "data is ", memberKickedTips)
+			logx.WithContext(l.ctx).Info(pb.OperationID, "data is ", memberKickedTips.String())
 			for _, v := range memberKickedTips.KickedUserList {
 				addUidList = append(addUidList, v.UserID)
 			}
@@ -241,9 +241,67 @@ func (l *SendMsgLogic) SendMsg(pb *pb.SendMsgReq) (*pb.SendMsgResp, error) {
 			return returnMsg(&replay, pb, 0, "", msgToMQSingle.MsgData.ServerMsgID, msgToMQSingle.MsgData.SendTime)
 
 		}
+	case types.SuperGroupChatType:
+		// callback
+		canSend, err := l.callbackBeforeSendSuperGroupMsg(pb)
+		if err != nil {
+			logx.WithContext(l.ctx).Error(utils.GetSelfFuncName(), "callbackBeforeSendSuperGroupMsg failed ", err.Error())
+		}
+		if !canSend {
+			return returnMsg(&replay, pb, 201, "callbackBeforeSendSuperGroupMsg result stop rpc and return", " ", 0)
+		}
+		// 读扩散
+		msgToMQSingle.MsgData = pb.MsgData
+		logx.WithContext(l.ctx).Info(msgToMQSingle.String())
+		err1 := l.sendMsgToKafka(&msgToMQSingle, msgToMQSingle.MsgData.GroupID, types.OnlineStatus)
+		if err1 != nil {
+			logx.WithContext(l.ctx).Error(msgToMQSingle.OperationID, "kafka send msg err:GroupID ", msgToMQSingle.MsgData.GroupID, msgToMQSingle.String())
+			return returnMsg(&replay, pb, 201, "kafka send msg err ", "", 0)
+		}
+		var addUidList []string
+		switch pb.MsgData.ContentType {
+		case types.MemberKickedNotification:
+			var tips chatpb.TipsComm
+			var memberKickedTips chatpb.MemberKickedTips
+			err := proto.Unmarshal(pb.MsgData.Content, &tips)
+			if err != nil {
+				logx.WithContext(l.ctx).Error(pb.OperationID, "Unmarshal err", err.Error())
+			}
+			err = proto.Unmarshal(tips.Detail, &memberKickedTips)
+			if err != nil {
+				logx.WithContext(l.ctx).Error(pb.OperationID, "Unmarshal err", err.Error())
+			}
+			logx.WithContext(l.ctx).Info(pb.OperationID, "data is ", memberKickedTips.String())
+			for _, v := range memberKickedTips.KickedUserList {
+				addUidList = append(addUidList, v.UserID)
+			}
+		case types.MemberQuitNotification:
+			addUidList = append(addUidList, pb.MsgData.SendID)
+
+		default:
+		}
+		logx.WithContext(l.ctx).Info("addUidList ", addUidList)
+		groupID := pb.MsgData.GroupID
+		for _, v := range addUidList {
+			pb.MsgData.RecvID = v
+			isSend := l.modifyMessageByUserMessageReceiveOpt(v, groupID, types.SuperGroupChatType, pb)
+			logx.WithContext(l.ctx).Info("isSend ", isSend)
+			if isSend {
+				msgToMQSingle.MsgData = pb.MsgData
+				err := l.sendMsgToKafka(&msgToMQSingle, v, types.OnlineStatus)
+				if err != nil {
+					logx.WithContext(l.ctx).Error("kafka send msg err:UserId ", v, msgToMQSingle.String())
+				}
+			}
+		}
+		// callback
+		if err := l.callbackAfterSendSuperGroupMsg(pb); err != nil {
+			logx.WithContext(l.ctx).Error(utils.GetSelfFuncName(), "callbackAfterSendSuperGroupMsg failed ", err.Error())
+		}
+		return returnMsg(&replay, pb, 0, "", msgToMQSingle.MsgData.ServerMsgID, msgToMQSingle.MsgData.SendTime)
 	case types.NotificationChatType:
 		msgToMQSingle.MsgData = pb.MsgData
-		logx.WithContext(l.ctx).Info(msgToMQSingle.OperationID, msgToMQSingle)
+		logx.WithContext(l.ctx).Info(msgToMQSingle.OperationID, msgToMQSingle.String())
 		err1 := l.sendMsgToKafka(&msgToMQSingle, msgToMQSingle.MsgData.RecvID, types.OnlineStatus)
 		if err1 != nil {
 			logx.WithContext(l.ctx).Error(msgToMQSingle.OperationID, "kafka send msg err:RecvID", msgToMQSingle.MsgData.RecvID, msgToMQSingle.String())

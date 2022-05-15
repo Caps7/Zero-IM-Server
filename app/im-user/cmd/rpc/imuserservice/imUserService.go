@@ -18,10 +18,13 @@ type (
 	GetGroupMemberIDListFromCacheResp    = pb.GetGroupMemberIDListFromCacheResp
 	GetSingleConversationRecvMsgOptsReq  = pb.GetSingleConversationRecvMsgOptsReq
 	GetSingleConversationRecvMsgOptsResp = pb.GetSingleConversationRecvMsgOptsResp
+	GetUserListFromSuperGroupWithOptReq  = pb.GetUserListFromSuperGroupWithOptReq
+	GetUserListFromSuperGroupWithOptResp = pb.GetUserListFromSuperGroupWithOptResp
 	IfAInBBlacklistReq                   = pb.IfAInBBlacklistReq
 	IfAInBBlacklistResp                  = pb.IfAInBBlacklistResp
 	IfAInBFriendListReq                  = pb.IfAInBFriendListReq
 	IfAInBFriendListResp                 = pb.IfAInBFriendListResp
+	UserIDOpt                            = pb.UserIDOpt
 	UserInfo                             = pb.UserInfo
 
 	ImUserService interface {
@@ -33,6 +36,8 @@ type (
 		IfAInBFriendList(ctx context.Context, in *IfAInBFriendListReq, opts ...grpc.CallOption) (*IfAInBFriendListResp, error)
 		//  获取单聊会话的消息接收选项
 		GetSingleConversationRecvMsgOpts(ctx context.Context, in *GetSingleConversationRecvMsgOptsReq, opts ...grpc.CallOption) (*GetSingleConversationRecvMsgOptsResp, error)
+		//  获取超级群成员列表 通过消息接收选项
+		GetUserListFromSuperGroupWithOpt(ctx context.Context, in *GetUserListFromSuperGroupWithOptReq, opts ...grpc.CallOption) (*GetUserListFromSuperGroupWithOptResp, error)
 	}
 
 	defaultImUserService struct {
@@ -68,4 +73,10 @@ func (m *defaultImUserService) IfAInBFriendList(ctx context.Context, in *IfAInBF
 func (m *defaultImUserService) GetSingleConversationRecvMsgOpts(ctx context.Context, in *GetSingleConversationRecvMsgOptsReq, opts ...grpc.CallOption) (*GetSingleConversationRecvMsgOptsResp, error) {
 	client := pb.NewImUserServiceClient(m.cli.Conn())
 	return client.GetSingleConversationRecvMsgOpts(ctx, in, opts...)
+}
+
+//  获取超级群成员列表 通过消息接收选项
+func (m *defaultImUserService) GetUserListFromSuperGroupWithOpt(ctx context.Context, in *GetUserListFromSuperGroupWithOptReq, opts ...grpc.CallOption) (*GetUserListFromSuperGroupWithOptResp, error) {
+	client := pb.NewImUserServiceClient(m.cli.Conn())
+	return client.GetUserListFromSuperGroupWithOpt(ctx, in, opts...)
 }

@@ -6,12 +6,16 @@ const (
 	WSPullMsgBySeqList = 1002
 	WSSendMsg          = 1003
 	WSSendSignalMsg    = 1004
+	WSPushMsg          = 2001
+	WSKickOnlineMsg    = 2002
+	WsLogoutMsg        = 2003
 )
 
 // msg 用到的
 const (
 	SingleChatType       = 1
 	GroupChatType        = 2
+	SuperGroupChatType   = 3
 	NotificationChatType = 4
 
 	OnlineStatus  = "online"
@@ -36,24 +40,6 @@ const (
 	GroupMutedNotification               = 1514
 	GroupCancelMutedNotification         = 1515
 	GroupMemberInfoSetNotification       = 1516
-
-	///消息类型
-	Text           = 101
-	Picture        = 102
-	Voice          = 103
-	Video          = 104
-	File           = 105
-	AtText         = 106
-	Merger         = 107
-	Card           = 108
-	Location       = 109
-	Custom         = 110
-	Revoke         = 111
-	HasReadReceipt = 112
-	Typing         = 113
-	Quote          = 114
-	Common         = 200
-	GroupMsg       = 201
 )
 
 const (

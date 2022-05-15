@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
 
@@ -18,7 +19,7 @@ func MsggatewayHandler(svcCtx *wssvc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		ws := wslogic.NewMsggatewayLogic(r.Context(), svcCtx)
+		ws := wslogic.NewMsggatewayLogic(context.Background(), svcCtx)
 		resp, ok := ws.Msggateway(&req)
 		status := http.StatusUnauthorized
 		if ok {

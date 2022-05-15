@@ -53,15 +53,27 @@ message GetSingleConversationRecvMsgOptsReq {
   string conversationID = 2;
 }
 enum RecvMsgOpt {
-    ReceiveMessage = 0;
-    NotReceiveMessage = 1;
-    ReceiveNotNotifyMessage = 2;
+  ReceiveMessage = 0;
+  NotReceiveMessage = 1;
+  ReceiveNotNotifyMessage = 2;
 }
 message GetSingleConversationRecvMsgOptsResp {
   CommonResp commonResp = 1;
   RecvMsgOpt opts = 2;
 }
-
+message GetUserListFromSuperGroupWithOptReq {
+  string superGroupID = 1;
+  repeated RecvMsgOpt opts = 2;
+  repeated string userIDList = 3;
+}
+message UserIDOpt {
+  string userID = 1;
+  RecvMsgOpt opts = 2;
+}
+message GetUserListFromSuperGroupWithOptResp {
+  CommonResp commonResp = 1;
+  repeated UserIDOpt UserIDOptList = 2;
+}
 service imUserService{
   // 获取群组成员列表
   rpc GetGroupMemberIDListFromCache(GetGroupMemberIDListFromCacheReq) returns (GetGroupMemberIDListFromCacheResp);
@@ -71,4 +83,6 @@ service imUserService{
   rpc IfAInBFriendList(IfAInBFriendListReq) returns (IfAInBFriendListResp);
   // 获取单聊会话的消息接收选项
   rpc GetSingleConversationRecvMsgOpts(GetSingleConversationRecvMsgOptsReq) returns (GetSingleConversationRecvMsgOptsResp);
+  // 获取超级群成员列表 通过消息接收选项
+  rpc GetUserListFromSuperGroupWithOpt(GetUserListFromSuperGroupWithOptReq) returns (GetUserListFromSuperGroupWithOptResp);
 }

@@ -1,0 +1,17 @@
+Name: msgtransfer-persistent
+
+Log:
+  ServiceName: msgtransfer-persistent
+  Level: info
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 10261
+  Path: /metrics
+
+Telemetry:
+  Name: msgtransfer-persistent
+  #Endpoint: http://jaeger:14268/api/traces
+  Endpoint: http://127.0.0.1:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger

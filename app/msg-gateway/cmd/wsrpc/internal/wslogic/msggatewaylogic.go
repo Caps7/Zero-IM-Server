@@ -53,7 +53,12 @@ func (l *MsggatewayLogic) runWithCtx(f func(ctx context.Context), kv ...attribut
 	f(spanCtx)
 }
 
+var msgGatewayLogic *MsggatewayLogic
+
 func NewMsggatewayLogic(ctx context.Context, svcCtx *wssvc.ServiceContext) *MsggatewayLogic {
+	if msgGatewayLogic != nil {
+		return msgGatewayLogic
+	}
 	ws := &MsggatewayLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
@@ -67,7 +72,8 @@ func NewMsggatewayLogic(ctx context.Context, svcCtx *wssvc.ServiceContext) *Msgg
 		ReadBufferSize:   ws.svcCtx.Config.Websocket.MaxMsgLen,
 		CheckOrigin:      func(r *http.Request) bool { return true },
 	}
-	return ws
+	msgGatewayLogic = ws
+	return msgGatewayLogic
 }
 
 func (l *MsggatewayLogic) Msggateway(req *types.Request) (*types.Response, bool) {
