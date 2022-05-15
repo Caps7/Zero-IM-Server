@@ -61,8 +61,8 @@ func (r *Rep) SaveUserChatMongo2(spanCtx context.Context, uid string, sendTime i
 func (r *Rep) SaveSuperGroupChatMongo2(spanCtx context.Context, groupId string, sendTime int64, m *chatpb.MsgDataToDB) error {
 	ctx, _ := context.WithTimeout(context.Background(), time.Duration(r.svcCtx.Config.Mongo.DBTimeout)*time.Second)
 	c := r.MongoClient.Database(r.svcCtx.Config.Mongo.DBDatabase).Collection(r.svcCtx.Config.Mongo.SuperGroupChatMsgCollectionName)
-	seqUid := getSeqGroupId(groupId, m.MsgData.Seq)
-	filter := bson.M{"groupid": seqUid}
+	seqGroupId := getSeqGroupId(groupId, m.MsgData.Seq)
+	filter := bson.M{"groupid": seqGroupId}
 	var err error
 	sMsg := model.MsgInfo{}
 	sMsg.SendTime = sendTime
@@ -76,8 +76,8 @@ func (r *Rep) SaveSuperGroupChatMongo2(spanCtx context.Context, groupId string, 
 			logx.WithContext(spanCtx).Errorf("SaveSuperGroupChatMongo2 error: %s", err.Error())
 			return err
 		}
-		sChat := model.UserChat{}
-		sChat.UID = seqUid
+		sChat := model.GroupChat{}
+		sChat.GroupID = seqGroupId
 		sChat.Msg = append(sChat.Msg, sMsg)
 		if _, err = c.InsertOne(ctx, &sChat); err != nil {
 			logx.WithContext(spanCtx).Errorf("InsertOne error: %s", err.Error())
